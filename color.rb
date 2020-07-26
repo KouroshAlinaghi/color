@@ -3,6 +3,7 @@ class Color
   def initialize(code) 
     r_g_b_t = Color.convert_to_r_g_b(code)
 
+    @code = code
     @red = r_g_b_t[0]
     @green = r_g_b_t[1]
     @blue = r_g_b_t[2]
@@ -14,10 +15,6 @@ class Color
     return hex.length == 1 ? "0" + hex : hex
   end
 
-  def component_to_rgb(c)
-    c.to_i(16)
-  end
-
   def convert_to_hex()
     if @type == "RGB"
       "##{component_to_hex(@red)}#{component_to_hex(@green)}#{component_to_hex(@blue)}"
@@ -27,16 +24,12 @@ class Color
   end
 
   def to_s
-    if @type == "RGB"
-      "(#{@red}, #{@green}, #{@blue})"
-    else
-      "##{@red}#{green}#{blue}"
-    end
+    "Code: #{@code}, Type: #{@type}, Red: #{@red}, Green: #{@green}, Blue: #{@blue}"
   end
 
   def convert_to_rgb()
     if @type != "RGB"
-      "(#{component_to_rgb(@red)}, #{component_to_rgb(@green)}, #{component_to_rgb(@blue)})"
+      "(#{@red}, #{@green}, #{@blue})"
     else
       throw "Cannot Convert #{@type} to RGB"
     end
@@ -49,17 +42,12 @@ class Color
 
     case code
     when rgb
-      rgb = code[1..(code.length-2)].split(/,/).map(&:strip)
+      rgb = code[1..(code.length-2)].split(/,/).map(&:strip).map(&:to_i)
       return rgb+["RGB"]
     when six_length_hex
-      return [code[1..2], code[3..4], code[5..6], "six_length_hex"]
+      return [code[1..2].to_i(16), code[3..4].to_i(16), code[5..6].to_i(16), "six_length_hex"]
     when hex
-      return [code[1], code[2], code[3], "Hex"]
+      return [code[1].to_i(16), code[2].to_i(16), code[3].to_i(16), "Hex"]
     end
   end
 end
-rgb = Color.new("(001,234,255)")
-p rgb.red # => "001"
-p rgb.green # => "234"
-p rgb.blue # => "255"
-p rgb.to_s # => "(001, 234, 255)"
