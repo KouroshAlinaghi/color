@@ -43,13 +43,14 @@ class Color
   end
 
   def self.convert_to_r_g_b(code)
-    rgb = /^\(([01][0-9][0-9]|2[0-5][0-5]),([01][0-9][0-9]|2[0-5][0-5]),([01][0-9][0-9]|2[0-5][0-5])\)$/
+    rgb = /^\((\d{1,2}|([01][0-9][0-9]|((25[0-5])|2[0-4]\d))),(| )(\d{1,2}|([01][0-9][0-9]|((25[0-5])|2[0-4]\d))),(| )(\d{1,2}|([01][0-9][0-9]|((25[0-5])|2[0-4]\d)))\)$/
     hex = /^#(\d|[a-f])(\d|[a-f])(\d|[a-f])$/
     six_length_hex = /^#(\d\d|\d[a-f]|[a-f]\d|[a-f][a-f])(\d\d|\d[a-f]|[a-f]\d|[a-f][a-f])(\d\d|\d[a-f]|[a-f]\d|[a-f][a-f])$/
 
     case code
     when rgb
-      return [code[1..3], code[5..7], code[9..11], "RGB"]
+      rgb = code[1..(code.length-2)].split(/,/).map(&:strip)
+      return rgb+["RGB"]
     when six_length_hex
       return [code[1..2], code[3..4], code[5..6], "six_length_hex"]
     when hex
@@ -57,3 +58,8 @@ class Color
     end
   end
 end
+rgb = Color.new("(001,234,255)")
+p rgb.red # => "001"
+p rgb.green # => "234"
+p rgb.blue # => "255"
+p rgb.to_s # => "(001, 234, 255)"
