@@ -1,4 +1,9 @@
+require_relative 'color_helper'
+
 class Color
+
+  include ColorHelper
+
   attr_reader :red, :green, :blue, :type
   def initialize(code) 
     r_g_b_t = Color.convert_to_r_g_b(code)
@@ -10,44 +15,16 @@ class Color
     @type = r_g_b_t[3]
   end
 
-  def component_to_hex(c) 
-    hex = c.to_i.to_s(16)
-    return hex.length == 1 ? "0" + hex : hex
-  end
-
-  def convert_to_hex()
-    if @type == "RGB"
-      "##{component_to_hex(@red)}#{component_to_hex(@green)}#{component_to_hex(@blue)}"
-    else
-      throw "Cannot Convert #{@type} to Hex"
-    end
-  end
-
-  def to_s
-    "Code: #{@code}, Type: #{@type}, Red: #{@red}, Green: #{@green}, Blue: #{@blue}"
-  end
-
-  def convert_to_rgb()
-    if @type != "RGB"
-      "(#{@red}, #{@green}, #{@blue})"
-    else
-      throw "Cannot Convert #{@type} to RGB"
-    end
-  end
 
   def self.convert_to_r_g_b(code)
-    rgb = /^\((\d{1,2}|([01][0-9][0-9]|((25[0-5])|2[0-4]\d))),(| )(\d{1,2}|([01][0-9][0-9]|((25[0-5])|2[0-4]\d))),(| )(\d{1,2}|([01][0-9][0-9]|((25[0-5])|2[0-4]\d)))\)$/
-    hex = /^#(\d|[a-f])(\d|[a-f])(\d|[a-f])$/
-    six_length_hex = /^#(\d\d|\d[a-f]|[a-f]\d|[a-f][a-f])(\d\d|\d[a-f]|[a-f]\d|[a-f][a-f])(\d\d|\d[a-f]|[a-f]\d|[a-f][a-f])$/
-
-    case code
-    when rgb
-      rgb = code[1..(code.length-2)].split(/,/).map(&:strip).map(&:to_i)
-      return rgb+["RGB"]
-    when six_length_hex
-      return [code[1..2].to_i(16), code[3..4].to_i(16), code[5..6].to_i(16), "six_length_hex"]
-    when hex
-      return [code[1].to_i(16), code[2].to_i(16), code[3].to_i(16), "Hex"]
+    regex_constants = ColorHelper.constants
+    for regex_const in regex_constants do
+      if code =~ ColorHelper.const_get(regex_const)
+        return ColorHelper.format(code, regex_const)
+      end
     end
   end
 end
+
+o = Color.new("#12121e")
+p o.to_s
