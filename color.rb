@@ -6,13 +6,12 @@ class Color
 
   attr_reader :red, :green, :blue, :type
   def initialize(code) 
-    r_g_b_t = Color.convert_to_r_g_b(code)
+    hash = Color.convert_to_r_g_b(code)
 
     @code = code
-    @red = r_g_b_t[0]
-    @green = r_g_b_t[1]
-    @blue = r_g_b_t[2]
-    @type = r_g_b_t[3]
+    hash.each do |k, v|
+      k == :type ? eval("@#{k} = :#{v.to_s}") : eval("@#{k} = #{v}")
+    end
   end
 
 
@@ -26,5 +25,5 @@ class Color
   end
 end
 
-o = Color.new("#12121e")
+o = Color.new("(12, 12, 12,0.8)")
 p o.to_s
