@@ -4,16 +4,23 @@ class Color
 
   include ColorHelper
 
-  attr_reader :red, :green, :blue, :type
   def initialize(code) 
     hash = Color.convert_to_r_g_b(code)
+    instance_variables = hash.keys+[:code]
+
+    str = "Color.attr_reader"
+    for instance_var in instance_variables 
+      str += " :#{instance_var.to_s},"
+    end
+    str = str[0..str.length-2]
+    eval str
 
     @code = code
+
     hash.each do |k, v|
       k == :type ? eval("@#{k} = :#{v.to_s}") : eval("@#{k} = #{v}")
     end
   end
-
 
   def self.convert_to_r_g_b(code)
     regex_constants = ColorHelper.constants
@@ -25,5 +32,5 @@ class Color
   end
 end
 
-o = Color.new("(12, 12, 12,0.8)")
+o = Color.new("rgba(085, 100, 0, 0.3)")
 p o.to_s
